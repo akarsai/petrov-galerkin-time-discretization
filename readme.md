@@ -2,7 +2,7 @@
 
 This repository contains the code to the paper
 
-[J. Giesselmann, A. Karsai, T. Tscherpel, Energy-consistent Petrov-Galerkin time discretization of port-Hamiltonian systems](https://arxiv.org/abs/2404.12480)
+[J. Giesselmann, A. Karsai, T. Tscherpel, Energy-consistent Petrov-Galerkin time discretization of port-Hamiltonian systems](https://doi.org/10.5802/smai-jcm.127)
 
 ## Reproducing our results
 
@@ -11,13 +11,43 @@ This repository contains the code to the paper
 
 The first step is to install Python with version `>=3.13.0`.
 We recommend using a virtual environment for this.
-Using [pyenv](https://github.com/pyenv/pyenv), the steps are as follows:
+Using [pyenv](https://github.com/pyenv/pyenv) with [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv), the steps are as follows:
+
+<details>
+<summary><b>How to install pyenv and pyenv-virtualenv</b></summary>
+<br>
+
+```bash
+## install pyenv
+# automatic installer
+curl -fsSL https://pyenv.run | bash
+# or macos or linux with homebrew:
+#     brew install pyenv
+# now make pyenv available in the shell (this assumes you use zsh. if you use another shell, please consult the pyenv manual)
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(pyenv init --path)"' >> ~/.zshrc
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+# restart the shell
+exec "$SHELL"
+
+## install pyenv-virtualenv
+# download and install
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+# or macos or linux with homebrew:
+#     brew install pyenv-virtualenv
+# add to path
+echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
+# restart the shell
+exec "$SHELL"
+```
+</details>
 
 ```bash
 # this assumes pyenv is available in the environment
 pyenv install --list | grep " 3\.[1]" # get all available versions, only starting with 3.1x
 pyenv install 3.13.0 # choose 3.13.0 for example
-pyenv virtualenv 3.13.0 petrov-galerkin # creates environment 'passive-feedback' with version 3.13.0
+pyenv virtualenv 3.13.0 petrov-galerkin # creates environment 'petrov-galerkin' with version 3.13.0
 pyenv activate petrov-galerkin # activate virtual environment
 ```
 
@@ -90,7 +120,7 @@ from timeit import default_timer as timer
 
 from spp import spp
 
-from helpers.ph import PortHamiltonian_AllLinear #, PortHamiltonian_LinearE
+from helpers.ph import PortHamiltonian_AllLinear
 
 # set up port-hamiltonian system
 D = 3 # system dimension
@@ -174,7 +204,7 @@ plt.show()
 
 ## Further notes
 - Throughout the codebase, all functions depending on time are vectorized in time. 
-This means that, e.g. `eta(z)` must be well-defined for arrays `z` with the shape `z.shape == (number_of_timepoints, space_dimension)`. 
+This means that, e.g. `eta(z)` must be well-defined for arrays `z` with the shape `z.shape == (number_of_timepoints, state_dimension)`. 
 The time index is always at position `0`.
 - Since the implementation uses the algorithmic differentiation capabilities of JAX, the implementations of the functions $E$, $J$, $R$, $\eta$ and $B$ need to be written in a JAX-compatible fashion. 
 The provided examples should be a good starting point.
